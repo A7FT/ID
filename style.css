@@ -641,3 +641,12 @@ body.light-theme .modal-content {
   }
 }
 
+/* FIX DRIDHJES SË HERO-SUBTITLE */
+.hero-subtitle {
+  display: inline-block;
+  min-height: 40px; 
+  line-height: 40px; 
+  overflow: hidden;
+}
+
+
