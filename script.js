@@ -1,10 +1,19 @@
-// ====== MOBILE MENU TOGGLE ======
 const menuBtn = document.getElementById("menuBtn");
 const navLinks = document.getElementById("navLinks");
 
 menuBtn.addEventListener("click", () => {
-  navLinks.classList.toggle("active"); // shto .active në CSS për display:block në celular
+  navLinks.classList.toggle("active");
+  document.body.classList.toggle("menu-open"); // ndalon scroll faqen
   menuBtn.classList.toggle("open");
+});
+
+// Mbyll menu automatikisht kur klikohet linku
+document.querySelectorAll(".nav-links li a").forEach(link => {
+  link.addEventListener("click", () => {
+    navLinks.classList.remove("active");
+    document.body.classList.remove("menu-open"); // rikthen scroll
+    menuBtn.classList.remove("open");
+  });
 });
 
 // Mbyll menu automatikisht kur klikohet linku në celular
@@ -111,3 +120,45 @@ if(contactForm) {
       });
   });
 }
+document.addEventListener("DOMContentLoaded", function() {
+
+  // ====== MOBILE MENU ======
+  const menuBtn = document.getElementById("menuBtn");
+  const navLinks = document.getElementById("navLinks");
+  menuBtn?.addEventListener("click", () => navLinks.classList.toggle("active"));
+  document.querySelectorAll(".nav-links li a").forEach(a => a.addEventListener("click", () => navLinks.classList.remove("active")));
+
+  // ====== HERO TYPED ======
+  const typedEl = document.getElementById("typed");
+  const texts = ["Full Stack Developer","Creative Designer","Problem Solver","Frontend Specialist"];
+  let tIndex=0,cIndex=0,deleting=false;
+
+  function typeEffect(){
+    if(!typedEl) return;
+    typedEl.textContent = texts[tIndex].substring(0,cIndex);
+    if(!deleting && cIndex<texts[tIndex].length) cIndex++,setTimeout(typeEffect,120);
+    else if(deleting && cIndex>0) cIndex--,setTimeout(typeEffect,70);
+    else deleting=!deleting, !deleting&&(tIndex=(tIndex+1)%texts.length),setTimeout(typeEffect,500);
+  }
+  typeEffect();
+
+  // ====== SCROLL FADE ======
+  const faders=document.querySelectorAll(".fade-in");
+  function reveal(){faders.forEach((el,i)=>{const top=el.getBoundingClientRect().top; window.innerHeight-100>top&&setTimeout(()=>el.classList.add("show"),i*150)})}
+  window.addEventListener("scroll",reveal); window.addEventListener("load",reveal);
+
+  // ====== SCROLL TOP ======
+  const scrollBtn=document.getElementById("scrollTopBtn");
+  window.addEventListener("scroll",()=>{scrollBtn&&(scrollBtn.style.display=window.scrollY>300?"block":"none")});
+  scrollBtn?.addEventListener("click",()=>window.scrollTo({top:0,behavior:"smooth"}));
+
+  // ====== BUTTONS MAGNETIC ======
+  document.querySelectorAll(".btn-primary, .btn-secondary").forEach(btn=>{
+    btn.addEventListener("mousemove",e=>{
+      const rect=btn.getBoundingClientRect(),x=e.clientX-rect.left-rect.width/2,y=e.clientY-rect.top-rect.height/2;
+      btn.style.transform=`translate(${x*0.2}px, ${y*0.2}px) scale(1.05)`;
+    });
+    btn.addEventListener("mouseleave",()=>btn.style.transform="translate(0,0) scale(1)");
+  });
+
+});
