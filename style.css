@@ -641,12 +641,52 @@ body.light-theme .modal-content {
   }
 }
 
-/* FIX DRIDHJES SË HERO-SUBTITLE */
-.hero-subtitle {
+/* ====== FIX: Stabilizo #typed për të parandaluar dridhjen dhe wrap-in ====== */
+#typed {
   display: inline-block;
-  min-height: 40px; 
-  line-height: 40px; 
-  overflow: hidden;
+  white-space: nowrap; /* Parandalon që teksti të ndahet në rreshta të ndryshëm */
+  overflow: hidden; /* Fsheh pjesën që dalë jashtë kutisë (nuk do bëhet wrap) */
+  text-overflow: ellipsis;/* opsional: vizualisht shrkuan '...' kur është shumë i gjatë */
+  min-height: 34px; /* mbaj lartësi fikse - rregullo sipas madhësisë së fontit tënd */
+  min-width: 180px; /* stabilizon gjerësinë fillestare */
+  max-width: 100%; /* mos e zhbëj responsiven */
+  vertical-align: middle; /* për të mbajtur rreshtimin e mirë me titullin */
+  transition: none; /* eviton animacione të papritura gjatë ndryshimit të tekstit */
 }
 
+/* Për mobile: zvogëlo min-width dhe bëj font-size pak më të vogël për t'u përshtatur */
+@media (max-width: 480px) {
+  #typed {
+    min-width: 120px;
+    min-height: 30px;
+    font-size: 16px; /* rregullo sipas nevojës */
+  }
+
+  /* Nëse hero-content po bëhet shumë i ngjeshur, lehtë shtojmë wrap kontrolluar */
+  .hero-content {
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+  }
+}
+
+/* Për tablet/ekrane të mesme që nuk bëjnë wrap të papritur */
+@media (max-width: 900px) {
+  #typed {
+    min-width: 140px;
+  }
+}
+
+/* Nëse lottie-animation (ose elementi djathtas) po shtyn përposhtë,
+   e bëjmë që animacioni të qëndrojë i qetë dhe të mos ndryshojë gjerësi. */
+.hero-animation {
+  flex-shrink: 0; /* mos lejo që animacioni të ndryshojë madhësi dhe të shkaktojë reflow */
+  width: 320px; /* rregullo sipas nevojës; në media queries mund të zvogëlohet */
+}
+
+@media (max-width: 900px) {
+  .hero-animation {
+    width: 260px; /* më e vogël në tablet/mobile */
+  }
+}
 
