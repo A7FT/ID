@@ -1,25 +1,16 @@
+// ====== MOBILE MENU TOGGLE ======
 const menuBtn = document.getElementById("menuBtn");
 const navLinks = document.getElementById("navLinks");
 
 menuBtn.addEventListener("click", () => {
-  navLinks.classList.toggle("active");
-  document.body.classList.toggle("menu-open"); // ndalon scroll faqen
+  navLinks.classList.toggle("active"); // shto .active në CSS për display:block në celular
   menuBtn.classList.toggle("open");
-});
-
-// Mbyll menu automatikisht kur klikohet linku
-document.querySelectorAll(".nav-links li a").forEach(link => {
-  link.addEventListener("click", () => {
-    navLinks.classList.remove("active");
-    document.body.classList.remove("menu-open"); // rikthen scroll
-    menuBtn.classList.remove("open");
-  });
 });
 
 // Mbyll menu automatikisht kur klikohet linku në celular
 document.querySelectorAll(".nav-links li a").forEach(link => {
   link.addEventListener("click", () => {
-    if (window.innerWidth <= 900) navLinks.classList.remove("active");
+    if(window.innerWidth <= 900) navLinks.classList.remove("active");
     menuBtn.classList.remove("open");
   });
 });
@@ -39,6 +30,7 @@ updateThemeIcon();
 themeToggle.addEventListener("click", () => {
   document.body.classList.toggle("light-theme");
   localStorage.setItem("theme", document.body.classList.contains("light-theme") ? "light" : "dark");
+  updateThemeIcon();
   animateThemeTransition();
 });
 
@@ -52,7 +44,6 @@ let typeIndex = 0, charIndex = 0, deleting = false;
 
 function typeEffect() {
   const typedEl = document.getElementById("typed");
-  if(!typedEl) return; // siguron që elementi ekziston
   const currentText = typedText[typeIndex];
   typedEl.textContent = currentText.substring(0, charIndex);
 
@@ -70,7 +61,7 @@ function typeEffect() {
 }
 typeEffect();
 
-// ====== SCROLL REVEAL ======
+// ====== SCROLL REVEAL ANIMATIONS ======
 const faders = document.querySelectorAll(".fade-in");
 
 function revealOnScroll() {
@@ -86,79 +77,120 @@ function revealOnScroll() {
 window.addEventListener("scroll", revealOnScroll);
 window.addEventListener("load", revealOnScroll);
 
-// ====== SCROLL TO TOP ======
+// ====== SCROLL TO TOP BUTTON ======
 const scrollBtn = document.getElementById("scrollTopBtn");
 
 window.addEventListener("scroll", () => {
-  if(scrollBtn) scrollBtn.style.display = window.scrollY > 300 ? "block" : "none";
+  scrollBtn.style.display = window.scrollY > 300 ? "block" : "none";
 });
 
-if(scrollBtn) scrollBtn.addEventListener("click", () => {
+scrollBtn.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
+// ====== PROJECT MODAL WITH 3D TILT ======
+const modal = document.getElementById("projectModal");
+const closeModal = modal.querySelector(".close");
+const projectCards = document.querySelectorAll(".projects-grid .card");
+
+projectCards.forEach(card => {
+  card.addEventListener("mouseenter", () => {
+    card.style.transform = "perspective(600px) rotateX(5deg) rotateY(5deg) scale(1.03)";
+  });
+  card.addEventListener("mouseleave", () => {
+    card.style.transform = "";
+  });
+  card.addEventListener("click", () => {
+    modal.style.display = "block";
+    modal.classList.add("fadeIn");
+  });
+});
+
+closeModal.addEventListener("click", closeProjectModal);
+
+function closeProjectModal() {
+  modal.classList.remove("fadeIn");
+  modal.classList.add("fadeOut");
+  setTimeout(() => {
+    modal.style.display = "none";
+    modal.classList.remove("fadeOut");
+  }, 300);
+}
+
+window.addEventListener("click", (e) => {
+  if (e.target === modal) closeProjectModal();
+});
+
 // ====== CONTACT FORM WITH EMAILJS ======
+// Për këtë të funksionojë realisht, regjistrohu tek https://www.emailjs.com/
+// dhe krijo serviceID, templateID, userID
+// Zëvendëso "YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", "YOUR_USER_ID" me të vërtetat
+
 const contactForm = document.getElementById("contactForm");
 const formStatus = document.getElementById("formStatus");
 
-if(contactForm) {
-  contactForm.addEventListener("submit", function(e){
-    e.preventDefault();
+contactForm.addEventListener("submit", function(e){
+  e.preventDefault();
 
-    if(formStatus) formStatus.textContent = "Sending...";
+  formStatus.textContent = "Sending...";
+  formStatus.classList.add("active");
 
-    // EmailJS
-    emailjs.sendForm('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', this, 'YOUR_USER_ID')
-      .then(() => {
-        if(formStatus) formStatus.textContent = "Message sent successfully!";
-        contactForm.reset();
-        setTimeout(() => { if(formStatus) formStatus.textContent = ""; }, 2500);
-      }, (error) => {
-        if(formStatus) formStatus.textContent = "Failed to send message. Try again.";
-        console.error(error);
-        setTimeout(() => { if(formStatus) formStatus.textContent = ""; }, 2500);
-      });
-  });
-}
-document.addEventListener("DOMContentLoaded", function() {
-
-  // ====== MOBILE MENU ======
-  const menuBtn = document.getElementById("menuBtn");
-  const navLinks = document.getElementById("navLinks");
-  menuBtn?.addEventListener("click", () => navLinks.classList.toggle("active"));
-  document.querySelectorAll(".nav-links li a").forEach(a => a.addEventListener("click", () => navLinks.classList.remove("active")));
-
-  // ====== HERO TYPED ======
-  const typedEl = document.getElementById("typed");
-  const texts = ["Full Stack Developer","Creative Designer","Problem Solver","Frontend Specialist"];
-  let tIndex=0,cIndex=0,deleting=false;
-
-  function typeEffect(){
-    if(!typedEl) return;
-    typedEl.textContent = texts[tIndex].substring(0,cIndex);
-    if(!deleting && cIndex<texts[tIndex].length) cIndex++,setTimeout(typeEffect,120);
-    else if(deleting && cIndex>0) cIndex--,setTimeout(typeEffect,70);
-    else deleting=!deleting, !deleting&&(tIndex=(tIndex+1)%texts.length),setTimeout(typeEffect,500);
-  }
-  typeEffect();
-
-  // ====== SCROLL FADE ======
-  const faders=document.querySelectorAll(".fade-in");
-  function reveal(){faders.forEach((el,i)=>{const top=el.getBoundingClientRect().top; window.innerHeight-100>top&&setTimeout(()=>el.classList.add("show"),i*150)})}
-  window.addEventListener("scroll",reveal); window.addEventListener("load",reveal);
-
-  // ====== SCROLL TOP ======
-  const scrollBtn=document.getElementById("scrollTopBtn");
-  window.addEventListener("scroll",()=>{scrollBtn&&(scrollBtn.style.display=window.scrollY>300?"block":"none")});
-  scrollBtn?.addEventListener("click",()=>window.scrollTo({top:0,behavior:"smooth"}));
-
-  // ====== BUTTONS MAGNETIC ======
-  document.querySelectorAll(".btn-primary, .btn-secondary").forEach(btn=>{
-    btn.addEventListener("mousemove",e=>{
-      const rect=btn.getBoundingClientRect(),x=e.clientX-rect.left-rect.width/2,y=e.clientY-rect.top-rect.height/2;
-      btn.style.transform=`translate(${x*0.2}px, ${y*0.2}px) scale(1.05)`;
+  // EmailJS example
+  emailjs.sendForm('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', this, 'YOUR_USER_ID')
+    .then(() => {
+      formStatus.textContent = "Message sent successfully!";
+      contactForm.reset();
+      setTimeout(() => formStatus.textContent = "", 2500);
+    }, (error) => {
+      formStatus.textContent = "Failed to send message. Try again.";
+      console.error(error);
+      setTimeout(() => formStatus.textContent = "", 2500);
     });
-    btn.addEventListener("mouseleave",()=>btn.style.transform="translate(0,0) scale(1)");
-  });
+});
 
+// ====== HERO SOCIAL LINKS INTERACTIVE HOVER ======
+const heroSocials = document.querySelectorAll(".hero-social a");
+heroSocials.forEach(link => {
+  link.addEventListener("mouseenter", () => link.style.transform = "scale(1.3)");
+  link.addEventListener("mouseleave", () => link.style.transform = "scale(1)");
+});
+
+// ====== MAGNETIC BUTTON EFFECT ======
+document.querySelectorAll(".btn-primary, .btn-secondary").forEach(button => {
+  button.addEventListener("mousemove", e => {
+    const rect = button.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width/2;
+    const y = e.clientY - rect.top - rect.height/2;
+    button.style.transform = `translate(${x*0.2}px, ${y*0.2}px) scale(1.05)`;
+  });
+  button.addEventListener("mouseleave", () => {
+    button.style.transform = "translate(0,0) scale(1)";
+  });
+});
+
+// ====== DYNAMIC GLASS PARALLAX HERO ======
+const heroAnimation = document.querySelector(".hero-animation");
+window.addEventListener("mousemove", e => {
+  const centerX = window.innerWidth/2;
+  const centerY = window.innerHeight/2;
+  const offsetX = (e.clientX - centerX)/100;
+  const offsetY = (e.clientY - centerY)/100;
+  heroAnimation.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+});
+
+// ====== BONUS: ANIMATED SECTION TITLES ======
+document.querySelectorAll(".section-title").forEach(title => {
+  title.innerHTML = title.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
+});
+
+const letters = document.querySelectorAll(".section-title .letter");
+letters.forEach((letter, index) => {
+  letter.style.display = "inline-block";
+  letter.style.transform = "translateY(50px)";
+  letter.style.opacity = 0;
+  setTimeout(() => {
+    letter.style.transition = `all 0.5s ease ${index*0.03}s`;
+    letter.style.transform = "translateY(0)";
+    letter.style.opacity = 1;
+  }, 200);
 });
